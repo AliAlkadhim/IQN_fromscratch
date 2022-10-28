@@ -3,6 +3,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')#switch to interactive plot
+import framework.utils as utils
 
 class ANN(object):
     """
@@ -41,36 +42,14 @@ class ANN(object):
         except Exception:
             pass
 
-    def normalize(self, values):
-        expected_range=self.expected_input_range
-        expected_min, expected_max = expected_range
-        scale_factor = expected_max - expected_min
-        offset = expected_min
-        scaled_values = (values - offset)/scale_factor - 0.5#this -0.5 is there so that the lowest value is -0.5
-        return scaled_values
-
-    def normalize_IQN(self, values):
-        expected_range=self.expected_input_range
-        expected_min, expected_max = expected_range
-        scale_factor = expected_max - expected_min
-        offset = expected_min
-        scaled_values = (values - offset)/scale_factor 
-        return scaled_values
-
-    def denormalize(self, normalized_values):
-        expected_range=self.expected_input_range
-        expected_min, expected_max = expected_range
-        scale_factor = expected_max - expected_min
-        offset = expected_min
-        return (normalized_values + 0.5) * scale_factor + offset
 
 
-    def denormalize_IQN(self, normalized_values):
-        expected_range=self.expected_input_range
-        expected_min, expected_max = expected_range
-        scale_factor = expected_max - expected_min
-        offset = expected_min
-        return normalized_values  * scale_factor + offset
+
+
+
+
+
+
 
 
     def RMS(self, v):
@@ -96,7 +75,7 @@ class ANN(object):
         """
         for iter in range(self.n_iter_train):
             x = next(training_set()).ravel()#ravel flattens it to 1-d array
-            x=self.normalize_IQN(x)
+            # x=utils.normalize_IQN(x)
             y=self.forward_propagate_data(x)
             loss = self.loss_func.calc(x,y)
             #calculate the (minimize) derivative of the loss wrt x, ie returns dLoss_dx
@@ -116,7 +95,7 @@ class ANN(object):
     def evaluate(self, evaluation_set):
         for iter in range(self.n_iter_evaluate):
             x = next(evaluation_set()).ravel()
-            x = self.normalize_IQN(x)
+            # x = self.normalize_IQN(x)
             y=self.forward_propagate_data(x)
             loss = self.loss_func.calc(x,y)
             #calculate the derivative of the loss wrt x, ie returns dLoss_dx
